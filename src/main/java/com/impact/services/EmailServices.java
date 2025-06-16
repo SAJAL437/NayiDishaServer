@@ -2,6 +2,7 @@ package com.impact.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -18,15 +19,21 @@ public class EmailServices {
         this.mailSender = mailSender;
     }
 
+    @Value("${app.base-url}")
+    private String baseUrl;
+
     public void sendVerificationEmail(String to, String token) throws MessagingException {
         logger.info("Sending verification email to: {}", to);
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         helper.setTo(to);
         helper.setSubject("Verify Your Email");
-        String verificationLink = "http://localhost:2512/auth/verify?token=" + token;
+
+        String verificationLink = baseUrl + "/auth/verify?token=" + token; // ✅ use injected base URL
+
         helper.setText("<h1>Email Verification</h1><p>Click the link below to verify your email:</p>" +
                 "<a href=\"" + verificationLink + "\">Verify Email</a>", true);
+
         mailSender.send(message);
         logger.info("Verification email sent to: {}", to);
     }
@@ -77,7 +84,6 @@ public class EmailServices {
             // Do not throw exception to avoid blocking complaint submission
         }
     }
-
 
     public void sendStatusUpdateEmail(String to, ReportIssue issue) {
         logger.info("Sending status update email to: {}", to);
