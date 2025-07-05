@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/signup", "/auth/signin", "/auth/verify").permitAll()
-                        .requestMatchers("/api/chat/message").permitAll()
+                        .requestMatchers("/api/chat/**").permitAll()
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/users/**").hasAuthority("ROLE_USER")
                         .anyRequest().authenticated())
